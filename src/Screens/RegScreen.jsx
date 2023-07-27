@@ -1,4 +1,5 @@
 import { useState } from "react";
+import validator from "validator";
 import addImg from "../../assets/images/add.png";
 import {
   TextInput,
@@ -8,6 +9,10 @@ import {
   Pressable,
   Image,
   KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback,
+  Alert,
+  TouchableHighlight,
 } from "react-native";
 
 export default RegScreen = () => {
@@ -16,7 +21,7 @@ export default RegScreen = () => {
   const [focusColorPass, setFocusColorPass] = useState("#e8e8e8");
   const [showPass, setShowPass] = useState(true);
 
-  const [text, onChangeText] = useState("");
+  const [login, onChangeLogin] = useState("");
   const [email, onChangeEmail] = useState("");
   const [password, onChangePass] = useState("");
 
@@ -41,12 +46,35 @@ export default RegScreen = () => {
     setShowPass(!showPass);
   };
 
+  const onBtnRegPress = () => {
+    const validEmail = validator.isEmail(email);
+
+    if (!email || !password) {
+      Alert.alert("All inputs must be filled");
+      return;
+    }
+    if (!validEmail) {
+      Alert.alert("Email not valid");
+      return;
+    }
+    const data = {
+      login,
+      email,
+      password,
+    };
+    console.log(data);
+
+    onChangeLogin("");
+    onChangeEmail("");
+    onChangePass("");
+  };
+
   return (
-  
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.Wrap}>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={245}
+          keyboardVerticalOffset={240}
         >
           <View style={styles.RegWrap}>
             <View style={styles.UserImgWrap}>
@@ -57,16 +85,19 @@ export default RegScreen = () => {
               <TextInput
                 type="text"
                 placeholder="Логін"
+                value={login}
+                onChangeText={onChangeLogin}
                 placeholderTextColor={"#BDBDBD"}
                 selectionColor="#212121"
                 onFocus={() => onFocusLogin()}
                 style={[{ borderColor: focusColorLogin }, styles.Input]}
-                //   value={text}
-                //   onChangeText={onChangeText}
               ></TextInput>
               <TextInput
                 type="email"
                 placeholder="Адреса електронної пошти"
+                value={email}
+                onChangeText={onChangeEmail}
+                keyboardType="email-address"
                 placeholderTextColor={"#BDBDBD"}
                 selectionColor="#212121"
                 onFocus={() => onFocusMail()}
@@ -85,7 +116,6 @@ export default RegScreen = () => {
                   onFocus={() => onFocusPass()}
                   style={[{ borderColor: focusColorPass }, styles.Input]}
                 ></TextInput>
-
                 <Pressable
                   onPress={() => changeShowPass()}
                   style={styles.ShowPas}
@@ -100,17 +130,16 @@ export default RegScreen = () => {
                 </Pressable>
               </View>
             </View>
-
-            <Pressable style={styles.RegBtn}>
+            <TouchableHighlight style={styles.RegBtn} onPress={onBtnRegPress}>
               <Text style={styles.BtnTitle}>Зареєструватися</Text>
-            </Pressable>
-
+            </TouchableHighlight>
             <Pressable style={styles.BtnLog}>
               <Text style={styles.BtnLogText}>Вже є аккаунт? Увійти</Text>
             </Pressable>
           </View>
         </KeyboardAvoidingView>
       </View>
+    </TouchableWithoutFeedback>
   );
 };
 

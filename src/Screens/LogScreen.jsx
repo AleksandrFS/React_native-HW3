@@ -1,5 +1,7 @@
+import validator from "validator";
+
 import { useState } from "react";
-import addImg from "../../assets/images/add.png";
+
 import {
   TextInput,
   Text,
@@ -7,12 +9,17 @@ import {
   StyleSheet,
   Pressable,
   KeyboardAvoidingView,
+  Alert,
+  TouchableWithoutFeedback,
+  Keyboard,
+  TouchableHighlight,
 } from "react-native";
 
 export default LogScreen = () => {
   const [focusColorMail, setFocusColorMail] = useState("#e8e8e8");
   const [focusColorPass, setFocusColorPass] = useState("#e8e8e8");
   const [showPass, setShowPass] = useState(true);
+
   const [email, onChangeEmail] = useState("");
   const [password, onChangePass] = useState("");
 
@@ -30,64 +37,86 @@ export default LogScreen = () => {
     setShowPass(!showPass);
   };
 
+  const onBtnLogPress = () => {
+    const validEmail = validator.isEmail(email);
+
+    if (!email || !password) {
+      Alert.alert("All inputs must be filled");
+      return;
+    }
+    if (!validEmail) {
+      Alert.alert("Email not valid");
+      return;
+    }
+    const data = {
+      email,
+      password,
+    };
+    console.log(data);
+
+    onChangeEmail("");
+    onChangePass("");
+  };
+
   return (
-    <View style={styles.Wrap}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={-220}
-      >
-        <View style={styles.LogWrap}>
-          <Text style={styles.Title}>Увійти</Text>
-          <View style={styles.InputWrap}>
-            <TextInput
-              type="email"
-              placeholder="Адреса електронної пошти"
-              placeholderTextColor={"#BDBDBD"}
-              selectionColor="#212121"
-              onFocus={() => onFocusMail()}
-              style={[{ borderColor: focusColorMail }, styles.Input]}
-            ></TextInput>
-            <View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.Wrap}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={-220}
+        >
+          <View style={styles.LogWrap}>
+            <Text style={styles.Title}>Увійти</Text>
+            <View style={styles.InputWrap}>
               <TextInput
-                type="password"
-                placeholder="Пароль"
-                maxLength={37}
-                value={password}
-                onChangeText={onChangePass}
-                secureTextEntry={showPass}
+                type="email"
+                placeholder="Адреса електронної пошти"
+                value={email}
+                onChangeText={onChangeEmail}
+                keyboardType="email-address"
                 placeholderTextColor={"#BDBDBD"}
                 selectionColor="#212121"
-                onFocus={() => onFocusPass()}
-                style={[{ borderColor: focusColorPass }, styles.Input]}
+                onFocus={() => onFocusMail()}
+                style={[{ borderColor: focusColorMail }, styles.Input]}
               ></TextInput>
+              <View>
+                <TextInput
+                  type="password"
+                  placeholder="Пароль"
+                  maxLength={37}
+                  value={password}
+                  onChangeText={onChangePass}
+                  secureTextEntry={showPass}
+                  placeholderTextColor={"#BDBDBD"}
+                  selectionColor="#212121"
+                  onFocus={() => onFocusPass()}
+                  style={[{ borderColor: focusColorPass }, styles.Input]}
+                ></TextInput>
 
-              <Pressable
-                onPress={() => changeShowPass()}
-                style={styles.ShowPas}
-                hitSlop={{ left: 32, bottom: 16, top: 16, right: 16 }}
-              >
-                {password.length > 0 &&
-                  (showPass ? (
-                    <Text style={styles.ShowPassText}>Показати</Text>
-                  ) : (
-                    <Text style={styles.ShowPassText}>Сховати</Text>
-                  ))}
-              </Pressable>
+                <Pressable
+                  onPress={() => changeShowPass()}
+                  style={styles.ShowPas}
+                  hitSlop={{ left: 32, bottom: 16, top: 16, right: 16 }}
+                >
+                  {password.length > 0 &&
+                    (showPass ? (
+                      <Text style={styles.ShowPassText}>Показати</Text>
+                    ) : (
+                      <Text style={styles.ShowPassText}>Сховати</Text>
+                    ))}
+                </Pressable>
+              </View>
+            </View>
+            <TouchableHighlight style={styles.LogBtn} onPress={onBtnLogPress}>
+              <Text style={styles.BtnTitle}>Увійти</Text>
+            </TouchableHighlight>
+            <View style={styles.RegOffer}>
+              <Text style={styles.QuestionText}>Немає акаунту? </Text>
             </View>
           </View>
-
-          <Pressable style={styles.LogBtn}>
-            <Text style={styles.BtnTitle}>Увійти</Text>
-          </Pressable>
-          <View style={styles.RegOffer}>
-            <Text style={styles.QuestionText}>Немає акаунту? </Text>
-            <Pressable>
-              <Text style={styles.BtnRegText}>Зареєструватися</Text>
-            </Pressable>
-          </View>
-        </View>
-      </KeyboardAvoidingView>
-    </View>
+        </KeyboardAvoidingView>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

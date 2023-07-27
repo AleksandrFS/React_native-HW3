@@ -15,8 +15,8 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Image source={bgImg} resizeMode="cover" style={styles.bg} />
-      <RegScreen />
-      {/* <LogScreen /> */}
+      {/* <RegScreen /> */}
+      <LogScreen />
       {/* <PostsScreen/> */}
       <StatusBar style="auto" />
     </View>
